@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Fixer 💖</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #ffe5ec; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-y: auto; padding: 20px; }
+        .slide { display: none; width: 100%; max-width: 420px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; animation: fadeIn 0.5s ease; }
+        .slide.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        h2 { color: #ff4d6d; margin-bottom: 15px; }
+        p { color: #4a4a4a; margin-bottom: 20px; font-size: 1.1rem; }
+        
+        /* Passcode Styles */
+        .dots { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
+        .dot { width: 15px; height: 15px; border: 2px solid #ff758f; border-radius: 50%; transition: background 0.2s; }
+        .dot.filled { background: #ff4d6d; }
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; justify-items: center; }
+        .key { width: 60px; height: 60px; background: #fff0f3; border: none; border-radius: 50%; font-size: 1.5rem; color: #ff4d6d; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        .key:active { background: #ffc2d1; transform: scale(0.95); }
+        
+        /* Buttons */
+        .btn { background: #ff4d6d; color: white; border: none; padding: 12px 25px; font-size: 1rem; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; transition: background 0.2s; }
+        .btn:hover { background: #ff758f; }
+        
+        /* List Style */
+        .reasons-list { text-align: left; margin: 20px 0; list-style: none; }
+        .reasons-list li { padding: 8px 0; color: #555; display: flex; align-items: center; gap: 10px; }
+        
+        /* Photo Grid Styles */
+        .photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0; }
+        .photo-card { background: #fff; padding: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transform: rotate(var(--r)); transition: transform 0.3s; }
+        .photo-card:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
+        .photo-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; }
+        .photo-caption { font-size: 0.85rem; color: #666; margin-top: 5px; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <!-- SLIDE 1: LOCK SCREEN -->
+    <div class="slide active" id="slide-lock">
+        <h2>🔒 Mood Fixer</h2>
+        <p>Enter the passcode to unlock your mood-fixer.</p>
+        <div class="dots">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+        <div class="keypad">
+            <button class="key" onclick="pressKey('1')">1</button>
+            <button class="key" onclick="pressKey('2')">2</button>
+            <button class="key" onclick="pressKey('3')">3</button>
+            <button class="key" onclick="pressKey('4')">4</button>
+            <button class="key" onclick="pressKey('5')">5</button>
+            <button class="key" onclick="pressKey('6')">6</button>
+            <button class="key" onclick="pressKey('7')">7</button>
+            <button class="key" onclick="pressKey('8')">8</button>
+            <button class="key" onclick="pressKey('9')">9</button>
+            <button class="key" style="visibility: hidden;"></button>
+            <button class="key" onclick="pressKey('0')">0</button>
+            <button class="key" onclick="clearCode()" style="font-size: 1rem;">CLR</button>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: WRONG PASSCODE -->
+    <div class="slide" id="slide-wrong">
+        <h2 style="color: #666;">❌ WRONG PASSCODE</h2>
+        <p style="font-size: 4rem;">😿</p>
+        <p>Aise gusse me galat password lagaoge?</p>
+        <button class="btn" onclick="goToSlide('slide-lock')">Try Again</button>
+    </div>
+
+    <!-- SLIDE 3: UNLOCKED / SURPRISE -->
+    <div class="slide" id="slide-surprise">
+        <h2>🎉 Unlocked!</h2>
+        <p style="font-size: 4rem;">🎁</p>
+        <p>I made something special to make you smile. Click below!</p>
+        <button class="btn" onclick="goToSlide('slide-gussa')">Open Surprise</button>
+    </div>
+
+    <!-- SLIDE 4: GUSSA CHHODH DO MAIN MESSAGE -->
+    <div class="slide" id="slide-gussa">
+        <h2>Ab Gussa Chhodh Bhi Do! 🥺</h2>
+        <p style="font-size: 4rem;">🙏✨</p>
+        <p>A small reminder that I am incredibly sorry and I hate it when we aren't talking.</p>
+        <button class="btn" onclick="goToSlide('slide-reasons')">Next Slide ➡️</button>
+    </div>
+
+    <!-- SLIDE 5: REASONS TO FORGIVE -->
+    <div class="slide" id="slide-reasons">
+        <h2>Why you should forgive me:</h2>
+        <ul class="reasons-list">
+            <li>📌 Because I miss your smile.</li>
+            <li>📌 Because my day is incomplete without talking to you.</li>
+            <li>📌 Because I promise to buy you your favorite food.</li>
+            <li>📌 Because look how much effort I put into this!</li>
+        </ul>
+        <button class="btn" onclick="goToSlide('slide-photos')">See Our Memories ❤️</button>
+    </div>
+
+    <!-- SLIDE 6: NEW PHOTO COLLAGE SLIDE (Replaced the Yes/No Buttons) -->
+    <div class="slide" id="slide-photos">
+        <h2>Look At Us! 🥰</h2>
+        <p>We are way too cute to be fighting. Gussa khatam karo aur chalo baat karo!</p>
+        
+        <div class="photo-grid">
+            <!-- Photo 1 -->
+            <div class="photo-card" style="--r: -3deg;">
+                <img src="my_favorite_day.jpg" alt="Memory 1">
+                <div class="photo-caption">Happiest times ✨</div>
+            </div>
+            <!-- Photo 2 -->
+            <div class="photo-card" style="--r: 2deg;">
+                <img src="love_photo.jpg" alt="Memory 2">
+                <div class="photo-caption">Cutest ever 🥰</div>
+            </div>
+            <!-- Photo 3 -->
+            <div class="photo-card" style="--r: -1deg;">
+                <img src="the_happiest_memory.jpg" alt="Memory 3">
+                <div class="photo-caption">Favorite day 📸</div>
+            </div>
+            <!-- Photo 4 -->
+            <div class="photo-card" style="--r: 4deg;">
+                <img src="the_cutest_one.jpg" alt="Memory 4">
+                <div class="photo-caption">I love you! ❤️</div>
+            </div>
+        </div>
+
+        <button class="btn" onclick="goToSlide('slide-lock')">🔒 Lock Screen</button>
+    </div>
+
+    <script>
+        // CHANGE YOUR PASSCODE HERE! (Default is 1234)
+        const CORRECT_CODE = "2201"; 
+        let currentInput = "";
+
+        function pressKey(num) {
+            if (currentInput.length < 4) {
+                currentInput += num;
+                updateDots();
+            }
+            if (currentInput.length === 4) {
+                setTimeout(checkCode, 300);
+            }
+        }
+
+        function clearCode() {
+            currentInput = "";
+            updateDots();
+        }
+
+        function updateDots() {
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                if (index < currentInput.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            });
+        }
+
+        function checkCode() {
+            if (currentInput === CORRECT_CODE) {
+                goToSlide('slide-surprise');
+            } else {
+                goToSlide('slide-wrong');
+            }
+            clearCode();
+        }
+
+        function goToSlide(slideId) {
+            document.querySelectorAll('.slide').forEach(slide => slide.classList.remove('active'));
+            document.getElementById(slideId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
